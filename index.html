@@ -37,7 +37,7 @@
           0.25,
           20
         );
-        camera.position.set(-1.8, 0.6, 2.7);
+        camera.position.set(-2.8, 0.6, 14.7);
 
         scene = new THREE.Scene();
 
@@ -52,7 +52,7 @@
           // model
 
           const loader = new GLTFLoader();
-          loader.load("suzanne.gltf", function (gltf) {
+          loader.load("VBUS101-Snowman.gltf", function (gltf) {
             scene.add(gltf.scene);
 
             render();
