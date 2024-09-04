@@ -106,12 +106,7 @@
     </script>
     <style>
       .nav {
-        height: 0;
-        left: 18px;
         position: sticky;
-        top: 0;
-        width: 150px;
-        z-index: 999;
       }
 /*       .nav:before {
         box-sizing: border-box;
@@ -131,40 +126,40 @@
         width: calc(100vw + 100px);
         z-index: -1;
       } */
-      .nav .group {
+/*       .nav .group {
         height: 90px;
         width: 170px;
         opacity: 0.5;
         transform: rotate(14.1deg);
         transform-origin: top left;
         transition: opacity .3s ease;
-      
-      }
-      .nav .group:hover {
-        opacity: 1;
-      }
+      } */
       .nav a {
         color: var(--color3);
         display: block;
         font-family: Rubik, sans-serif;
         font-size: 20px;
         font-weight: 700;
+        opacity: 0.3;
         position: relative;
         text-decoration: none;
         text-transform: lowercase;
-        transition: color .5s ease;
+        transition: color .3s ease;
+      }
+      .nav a:hover {
+        opacity: 1;
       }
       .nav a.logo {
         font-size: 90px;
-        left: 10px;
+        left: 27px;
         letter-spacing: .3rem;
         position: absolute;
-        top: 31px;
+        top: -17px;
         z-index: 1;
       }
     </style>
     <nav class="nav">
-      <div class="group"><a class="logo" href="https://joerhoney.com">:j</a></div>
+      <a class="logo" href="https://joerhoney.com">:j</a>
     </nav>
   </body>
 </html>
