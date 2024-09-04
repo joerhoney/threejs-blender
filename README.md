@@ -1,19 +1,15 @@
-![Suzanne Scene Running in Blender](https://www.soft8soft.com/wiki/images/b/b6/Suzanne_blender.jpg)
+**3D Modeling Class: Assignment 1**
+# [Snowman](https://joerhoney.github.io/threejs-blender/)
 
-# Three.js-Blender Template
-Use this starter project for creating 3D web applications with Blender and Three.js. It includes:
+![Screenshot of snowman](https://github.com/joerhoney/threejs-blender/blob/main/snowman-screenshot.jpg)
 
-* Blend file with "Suzanne" model and Principled BSDF shader.
-* Exported asset in glTF 2.0 format.
-* Equirectangular HDRI map for environment lighting.
-* Three.js modules.
-* Basic web server script written in Python.
-* index.html file with HTML/CSS/JavaScript code.
+## Objective
+* Use geometry and transform tools to create a snowman.
 
-See [this wiki page](https://www.soft8soft.com/wiki/index.php/Making_3D_web_apps_with_Blender_and_Three.js) for more info on how to make and run actual WebGL apps with this starter project.
+## Tools
+* Blender (topic of this class)
+* Three.js (not part of this class)
 
-## Support
-Got questions? Ask on the [Forums](https://www.soft8soft.com/forums/).
-
-## License
-This project is licensed under the terms of the MIT license.
+## Notes
+* This is based on a 3D Modeling class I am attending at Santiago Canyon College in Orange, CA.
+* I embellished this work beyond the scope of the original assignment, just to give it more appeal. For instance, materials, backgrounds and lighting were not allowed. The model had to be submitted in default gray with nothing but the geometry.
