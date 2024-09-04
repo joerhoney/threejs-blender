@@ -95,5 +95,69 @@
         renderer.render(scene, camera);
       }
     </script>
+    <style>
+      :root {
+        --color3: #ff653a;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color3: #ea3052;
+        }
+      }
+      .nav {
+        height: 0;
+        left: 18px;
+        position: sticky;
+        top: 0;
+        width: 150px;
+        z-index: 999;
+      }
+      .nav:before {
+        box-sizing: border-box;
+        color: transparent;
+        content: "▶";
+        font-size: 540px;
+        height: 0;
+        left: -120px;
+        overflow: hidden;
+        padding: 0 0 500px;
+        pointer-events: none;
+        position: absolute;
+        text-shadow: 0 0 140px var(--color1);
+        top: 0;
+        transform: scaleY(1.5);
+        transform-origin: top left;
+        width: calc(100vw + 100px);
+        z-index: -1;
+      }
+      .nav .group {
+        height: 90px;
+        width: 170px;
+        transform: rotate(14.1deg);
+        transform-origin: top left;
+      }
+      .nav a {
+        color: var(--color3);
+        display: block;
+        font-family: Rubik, sans-serif;
+        font-size: 20px;
+        font-weight: 700;
+        position: relative;
+        text-decoration: none;
+        text-transform: lowercase;
+        transition: color .5s ease;
+      }
+      .nav a.logo {
+        font-size: 90px;
+        left: 10px;
+        letter-spacing: .3rem;
+        position: absolute;
+        top: 31px;
+        z-index: 1;
+      }
+    </style>
+    <nav class="nav">
+      <div class="group"><a class="logo" href="https://joerhoney.com">:j</a></div>
+    </nav>
   </body>
 </html>
