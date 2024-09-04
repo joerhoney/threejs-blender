@@ -41,23 +41,26 @@
 
         scene = new THREE.Scene();
 
-        new RGBELoader().load("environment.hdr", function (texture) {
-          texture.mapping = THREE.EquirectangularReflectionMapping;
+        new RGBELoader().load(
+          "pexels-8moments-748837-360.hdr",
+          function (texture) {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
 
-          scene.background = texture;
-          scene.environment = texture;
-
-          render();
-
-          // model
-
-          const loader = new GLTFLoader();
-          loader.load("VBUS101-Snowman.gltf", function (gltf) {
-            scene.add(gltf.scene);
+            scene.background = texture;
+            scene.environment = texture;
 
             render();
-          });
-        });
+
+            // model
+
+            const loader = new GLTFLoader();
+            loader.load("VBUS101-Snowman.gltf", function (gltf) {
+              scene.add(gltf.scene);
+
+              render();
+            });
+          }
+        );
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
