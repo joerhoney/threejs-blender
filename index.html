@@ -135,7 +135,7 @@
         transition: opacity .3s ease;
       } */
       .nav a {
-        color: var(--color3);
+        color: gray;
         display: block;
         font-family: Rubik, sans-serif;
         font-size: 20px;
@@ -144,9 +144,12 @@
         position: relative;
         text-decoration: none;
         text-transform: lowercase;
-        transition: color .3s ease;
+        transition: all .3s ease;
+        transform: rotate(14.125deg);
+        transform-origin: top left;
       }
       .nav a:hover {
+        color: var(--color3);
         opacity: 1;
       }
       .nav a.logo {
