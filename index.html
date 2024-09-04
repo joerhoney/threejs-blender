@@ -7,7 +7,16 @@
       name="viewport"
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
+    <link href="https://fonts.googleapis.com/css?family=Rubik:400,700&amp;display=swap" rel="stylesheet">
     <style>
+      :root {
+        --color3: #ff653a;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color3: #ea3052;
+        }
+      }
       body {
         margin: 0px;
       }
@@ -96,14 +105,6 @@
       }
     </script>
     <style>
-      :root {
-        --color3: #ff653a;
-      }
-      @media (prefers-color-scheme: dark) {
-        :root {
-          --color3: #ea3052;
-        }
-      }
       .nav {
         height: 0;
         left: 18px;
@@ -112,7 +113,7 @@
         width: 150px;
         z-index: 999;
       }
-      .nav:before {
+/*       .nav:before {
         box-sizing: border-box;
         color: transparent;
         content: "▶";
@@ -129,12 +130,18 @@
         transform-origin: top left;
         width: calc(100vw + 100px);
         z-index: -1;
-      }
+      } */
       .nav .group {
         height: 90px;
         width: 170px;
+        opacity: 0.5;
         transform: rotate(14.1deg);
         transform-origin: top left;
+        transition: opacity .3s ease;
+      
+      }
+      .nav .group:hover {
+        opacity: 1;
       }
       .nav a {
         color: var(--color3);
