@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>3D Snowman</title>
+    <title>Three.js-Blender Template</title>
     <meta charset="utf-8" />
     <meta
       name="viewport"
@@ -10,7 +10,7 @@
     <meta name="theme-color" content="#eeeeee" />
     <meta
       name="description"
-      content="A 3D model of snowman in a snowy countryside"
+      content="Description for scene."
     />
     <meta
       property="og:image"
@@ -18,7 +18,7 @@
     />
     <meta
       property="og:keywords"
-      content="3D model, snowman, snowy countryside, winter"
+      content="3D model, 3D animation"
     />
     <meta property="og:type" content="website" />
     <link
@@ -48,8 +48,27 @@
       import { GLTFLoader } from "./GLTFLoader.js";
       import { RGBELoader } from "./RGBELoader.js";
 
-      let camera, scene, renderer;
+      let camera, scene, renderer, mesh;
 
+      // Create an AnimationMixer, and get the list of AnimationClip instances
+      const mixer = new THREE.AnimationMixer( mesh );
+      const clips = mesh.animations;
+
+      // Update the mixer on each frame
+      function update () {
+      	mixer.update( deltaSeconds );
+      }
+
+      // // Play a specific animation
+      // const clip = THREE.AnimationClip.findByName( clips, 'dance' );
+      // const action = mixer.clipAction( clip );
+      // action.play();
+
+      // Play all animations
+      clips.forEach( function ( clip ) {
+      	mixer.clipAction( clip ).play();
+      } );
+      
       init();
       render();
 
