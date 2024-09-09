@@ -104,6 +104,16 @@
               action = mixer.clipAction(gltf.animations[0]);
               action.play();
 
+              console.log("loader:");
+              console.log(loader);
+              console.log(JSON.stringify(loader));
+              console.log("mixer:");
+              console.log(mixer);
+              console.log(JSON.stringify(mixer));
+              console.log("action:");
+              console.log(action);
+              console.log(JSON.stringify(action));
+
               scene.add(gltf.scene);
 
               render();
