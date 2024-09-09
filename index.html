@@ -48,7 +48,7 @@
       import { GLTFLoader } from "./GLTFLoader.js";
       import { RGBELoader } from "./RGBELoader.js";
 
-      let camera, scene, renderer, mixer, action;
+      let camera, scene, renderer, mixer;
 
       // Create an AnimationMixer, and get the list of AnimationClip instances
       // const mixer = new THREE.AnimationMixer( mesh );
@@ -107,6 +107,8 @@
               console.log("loader:");
               console.log(loader);
               console.log(JSON.stringify(loader));
+              console.log("gltf:");
+              console.log(gltf);
               console.log("mixer:");
               console.log(mixer);
               console.log("action:");
