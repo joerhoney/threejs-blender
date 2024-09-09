@@ -48,7 +48,7 @@
       import { GLTFLoader } from "./GLTFLoader.js";
       import { RGBELoader } from "./RGBELoader.js";
 
-      let camera, scene, renderer, mixer, action;
+      let camera, scene, renderer, mixer, cubeAction;
 
       // Create an AnimationMixer, and get the list of AnimationClip instances
       // const mixer = new THREE.AnimationMixer( mesh );
@@ -101,8 +101,8 @@
             const loader = new GLTFLoader();
             loader.load("Moving-Geometry.gltf", function (gltf) {
               mixer = new THREE.AnimationMixer(gltf.scene);
-              action = mixer.clipAction(gltf.animations[0]);
-              action.play();
+              cubeAction = mixer.clipAction(gltf.animations[1]);
+              cubeAction.play();
 
               console.log("loader:");
               console.log(loader);
@@ -111,8 +111,8 @@
               console.log(gltf);
               console.log("mixer:");
               console.log(mixer);
-              console.log("action:");
-              console.log(action);
+              console.log("cubeAction:");
+              console.log(cubeAction);
               console.log("scene:");
               console.log(scene);
 
