@@ -8,18 +8,12 @@
       content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
     />
     <meta name="theme-color" content="#eeeeee" />
-    <meta
-      name="description"
-      content="Description for scene."
-    />
+    <meta name="description" content="Description for scene." />
     <meta
       property="og:image"
       content="https://raw.githubusercontent.com/joerhoney/3d-snowman/main/snowman-screenshot.jpg"
     />
-    <meta
-      property="og:keywords"
-      content="3D model, 3D animation"
-    />
+    <meta property="og:keywords" content="3D model, 3D animation" />
     <meta property="og:type" content="website" />
     <link
       href="https://fonts.googleapis.com/css?family=Rubik:400,700&amp;display=swap"
@@ -48,7 +42,13 @@
       import { GLTFLoader } from "./GLTFLoader.js";
       import { RGBELoader } from "./RGBELoader.js";
 
-      let camera, scene, renderer, dt, lastframe = Date.now(), mixer, cubeAction;
+      let camera,
+        scene,
+        renderer,
+        dt,
+        lastframe = Date.now(),
+        mixer,
+        cubeAction;
 
       // Create an AnimationMixer, and get the list of AnimationClip instances
       // const mixer = new THREE.AnimationMixer( mesh );
@@ -68,7 +68,7 @@
       // clips.forEach( function ( clip ) {
       // 	mixer.clipAction( clip ).play();
       // } );
-      
+
       init();
       update();
       render();
@@ -109,9 +109,9 @@
             // model
 
             const loader = new GLTFLoader();
-            loader.load("Moving-Geometry.gltf", function (gltf) {
+            loader.load("Moving-Geometry-2.gltf", function (gltf) {
               mixer = new THREE.AnimationMixer(gltf.scene);
-              cubeAction = mixer.clipAction(gltf.animations[1]);
+              cubeAction = mixer.clipAction(gltf.animations[0]);
 
               console.log("loader:");
               console.log(loader);
@@ -160,15 +160,15 @@
       }
 
       function update() {
-        dt = (Date.now()-lastframe)/1000
+        dt = (Date.now() - lastframe) / 1000;
 
-        if(mixer){
+        if (mixer) {
           mixer.update(dt);
         }
 
-        renderer.render( scene, camera );
-        lastframe=Date.now()
-        requestAnimationFrame( update );
+        renderer.render(scene, camera);
+        lastframe = Date.now();
+        requestAnimationFrame(update);
       }
 
       function render() {
