@@ -48,7 +48,7 @@
       import { GLTFLoader } from "./GLTFLoader.js";
       import { RGBELoader } from "./RGBELoader.js";
 
-      let camera, scene, renderer, mixer, cubeAction;
+      let camera, scene, renderer, dt, lastframe = Date.now(), mixer, cubeAction;
 
       // Create an AnimationMixer, and get the list of AnimationClip instances
       // const mixer = new THREE.AnimationMixer( mesh );
@@ -70,6 +70,7 @@
       // } );
       
       init();
+      update();
       render();
 
       function init() {
@@ -86,8 +87,17 @@
 
         scene = new THREE.Scene();
 
+        // let ambilight = new THREE.AmbientLight( 0xcccffc, 3.4 );
+        // ambilight.name = "ambilight"
+        // scene.add( ambilight );
+
+        // let dirlight = new THREE.DirectionalLight( 0xffcffc, 5.4 );
+        // dirlight.name = "dirlight"
+        // dirlight.position.set(0,0,0)
+        // scene.add( dirlight );
+
         new RGBELoader().load(
-          "pexels-8moments-748837-360.hdr",
+          "pexels-pachon-in-motion-1-360.hdr",
           function (texture) {
             texture.mapping = THREE.EquirectangularReflectionMapping;
 
@@ -102,13 +112,12 @@
             loader.load("Moving-Geometry.gltf", function (gltf) {
               mixer = new THREE.AnimationMixer(gltf.scene);
               cubeAction = mixer.clipAction(gltf.animations[1]);
-              cubeAction.play();
 
               console.log("loader:");
               console.log(loader);
               console.log(JSON.stringify(loader));
-              console.log("gltf:");
-              console.log(gltf);
+              console.log("gltf.animations[1]:");
+              console.log(gltf.animations[1]);
               console.log("mixer:");
               console.log(mixer);
               console.log("cubeAction:");
@@ -117,13 +126,13 @@
               console.log(scene);
 
               scene.add(gltf.scene);
-
-              render();
+              cubeAction.play();
             });
           }
         );
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.physicallyCorrectLights = true;
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -134,7 +143,7 @@
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.addEventListener("change", render); // use if there is no animation loop
         controls.minDistance = 4;
-        controls.maxDistance = 16;
+        controls.maxDistance = 64;
         controls.target.set(0, 0, 0);
         controls.update();
 
@@ -150,7 +159,17 @@
         render();
       }
 
-      //
+      function update() {
+        dt = (Date.now()-lastframe)/1000
+
+        if(mixer){
+          mixer.update(dt);
+        }
+
+        renderer.render( scene, camera );
+        lastframe=Date.now()
+        requestAnimationFrame( update );
+      }
 
       function render() {
         renderer.render(scene, camera);
