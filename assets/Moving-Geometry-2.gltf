@@ -463,7 +463,7 @@
 			"doubleSided":true,
 			"emissiveFactor":[
 				0,
-				0.6219954490661621,
+				0.799781858921051,
 				1
 			],
 			"extensions":{
@@ -475,8 +475,8 @@
 			"pbrMetallicRoughness":{
 				"baseColorFactor":[
 					0,
-					0.7912935018539429,
-					0.7259536981582642,
+					0.723781943321228,
+					0.7913904786109924,
 					1
 				],
 				"metallicFactor":0,
@@ -494,20 +494,6 @@
 					1
 				],
 				"roughnessFactor":0.31494662165641785
-			}
-		},
-		{
-			"doubleSided":true,
-			"name":"Carrot",
-			"pbrMetallicRoughness":{
-				"baseColorFactor":[
-					0.8273605108261108,
-					0.11418673396110535,
-					0.023744765669107437,
-					1
-				],
-				"metallicFactor":0,
-				"roughnessFactor":0.5
 			}
 		}
 	],
@@ -928,7 +914,7 @@
 						"TEXCOORD_0":90
 					},
 					"indices":91,
-					"material":3
+					"material":1
 				}
 			]
 		},

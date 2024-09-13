@@ -11,7 +11,7 @@
     <meta name="description" content="Description for scene." />
     <meta
       property="og:image"
-      content="https://raw.githubusercontent.com/joerhoney/threejs-blender/main/geometry-screenshot.jpg"
+      content="https://raw.githubusercontent.com/joerhoney/threejs-blender/main/screenshot.jpg"
     />
     <meta property="og:keywords" content="3D model, 3D animation" />
     <meta property="og:type" content="website" />
@@ -33,68 +33,50 @@
       }
     </style>
   </head>
-
   <body>
+    <div id="container"></div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./js/build/three.module.js",
+          "three/addons/": "./js/"
+        }
+      }
+    </script>
+
     <script type="module">
-      import * as THREE from "./js/three.module.js";
+      import * as THREE from "three";
 
-      import { OrbitControls } from "./js/OrbitControls.js";
-      import { GLTFLoader } from "./js/GLTFLoader.js";
-      import { RGBELoader } from "./js/RGBELoader.js";
+      // import Stats from "three/addons/libs/stats.module.js";
+      // import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
-      let camera,
-        scene,
-        renderer,
-        dt,
-        lastframe = Date.now(),
-        mixer,
-        cubeAction;
+      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+      import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+      import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
+      import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+      import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+      import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+      import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
 
-      // Create an AnimationMixer, and get the list of AnimationClip instances
-      // const mixer = new THREE.AnimationMixer( mesh );
-      // const clips = mesh.animations;
+      let camera, stats;
+      let composer, renderer, mixer, clock;
 
-      // Update the mixer on each frame
-      // function update () {
-      // 	mixer.update( deltaSeconds );
-      // }
-
-      // // Play a specific animation
-      // const clip = THREE.AnimationClip.findByName( clips, 'dance' );
-      // const action = mixer.clipAction( clip );
-      // action.play();
-
-      // Play all animations
-      // clips.forEach( function ( clip ) {
-      // 	mixer.clipAction( clip ).play();
-      // } );
+      const params = {
+        threshold: 0,
+        strength: 0.03,
+        radius: 0,
+        exposure: 2,
+      };
 
       init();
-      update();
-      render();
 
-      function init() {
-        const container = document.createElement("div");
-        document.body.appendChild(container);
+      async function init() {
+        const container = document.getElementById("container");
 
-        camera = new THREE.PerspectiveCamera(
-          45,
-          window.innerWidth / window.innerHeight,
-          0.25,
-          200
-        );
-        camera.position.set(20, 10, 120);
+        clock = new THREE.Clock();
 
-        scene = new THREE.Scene();
-
-        // let ambilight = new THREE.AmbientLight( 0xcccffc, 3.4 );
-        // ambilight.name = "ambilight"
-        // scene.add( ambilight );
-
-        // let dirlight = new THREE.DirectionalLight( 0xffcffc, 5.4 );
-        // dirlight.name = "dirlight"
-        // dirlight.position.set(0,0,0)
-        // scene.add( dirlight );
+        const scene = new THREE.Scene();
 
         new RGBELoader().load(
           "assets/pexels-pachon-in-motion-1-360.hdr",
@@ -104,82 +86,146 @@
             scene.background = texture;
             scene.environment = texture;
 
-            render();
-
             // model
 
-            const loader = new GLTFLoader();
-            loader.load("assets/Moving-Geometry-2.gltf", function (gltf) {
-              mixer = new THREE.AnimationMixer(gltf.scene);
-              cubeAction = mixer.clipAction(gltf.animations[0]);
-
-              console.log("loader:");
-              console.log(loader);
-              console.log(JSON.stringify(loader));
-              console.log("gltf.animations[1]:");
-              console.log(gltf.animations[1]);
-              console.log("mixer:");
-              console.log(mixer);
-              console.log("cubeAction:");
-              console.log(cubeAction);
-              console.log("scene:");
-              console.log(scene);
-
-              scene.add(gltf.scene);
-              cubeAction.play();
-            });
+            // const loader = new GLTFLoader().setPath( 'assets/' );
+            // loader.load( 'Moving-Geometry-2.gltf', function ( gltf ) {
+            // 	scene.add( gltf.scene );
+            // } );
           }
         );
 
+        //
+
+        camera = new THREE.PerspectiveCamera(
+          45,
+          window.innerWidth / window.innerHeight,
+          0.25,
+          200
+        );
+        camera.position.set(20, 10, 120);
+        scene.add(camera);
+
+        scene.add(new THREE.AmbientLight(0xcccccc));
+
+        const pointLight = new THREE.PointLight(0xffffff, 100);
+        camera.add(pointLight);
+
+        const loader = new GLTFLoader();
+        const gltf = await loader.loadAsync("assets/Moving-Geometry-2.gltf");
+
+        const model = gltf.scene;
+        scene.add(model);
+
+        mixer = new THREE.AnimationMixer(model);
+        const clip = gltf.animations[0];
+        mixer.clipAction(clip.optimize()).play();
+
+        //
+
         renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.physicallyCorrectLights = true;
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1;
-        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.setAnimationLoop(animate);
+        renderer.toneMapping = THREE.ReinhardToneMapping;
         container.appendChild(renderer.domElement);
 
+        //
+
+        const renderScene = new RenderPass(scene, camera);
+
+        const bloomPass = new UnrealBloomPass(
+          new THREE.Vector2(window.innerWidth, window.innerHeight),
+          0.5,
+          0.5,
+          0.5
+        );
+        bloomPass.threshold = params.threshold;
+        bloomPass.strength = params.strength;
+        bloomPass.radius = params.radius;
+
+        const outputPass = new OutputPass();
+
+        composer = new EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+        composer.addPass(outputPass);
+
+        //
+
+        // stats = new Stats();
+        // container.appendChild(stats.dom);
+
+        //
+
         const controls = new OrbitControls(camera, renderer.domElement);
-        controls.addEventListener("change", render); // use if there is no animation loop
+        // controls.maxPolarAngle = Math.PI * 0.5;
         controls.minDistance = 4;
         controls.maxDistance = 64;
-        controls.target.set(0, 0, 0);
-        controls.update();
+        // controls.target.set(20, 10, 120);
+
+        //
+
+        // const gui = new GUI();
+
+        // const bloomFolder = gui.addFolder("bloom");
+
+        // bloomFolder
+        //   .add(params, "threshold", 0.0, 1.0)
+        //   .onChange(function (value) {
+        //     bloomPass.threshold = Number(value);
+        //   });
+
+        // bloomFolder
+        //   .add(params, "strength", 0.0, 3.0)
+        //   .onChange(function (value) {
+        //     bloomPass.strength = Number(value);
+        //   });
+
+        // gui
+        //   .add(params, "radius", 0.0, 1.0)
+        //   .step(0.01)
+        //   .onChange(function (value) {
+        //     bloomPass.radius = Number(value);
+        //   });
+
+        // const toneMappingFolder = gui.addFolder("tone mapping");
+
+        // toneMappingFolder
+        //   .add(params, "exposure", 0.1, 2)
+        //   .onChange(function (value) {
+        //     renderer.toneMappingExposure = Math.pow(value, 4.0);
+        //   });
 
         window.addEventListener("resize", onWindowResize);
       }
 
       function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        camera.aspect = width / height;
         camera.updateProjectionMatrix();
 
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-        render();
+        renderer.setSize(width, height);
+        composer.setSize(width, height);
       }
 
-      function update() {
-        dt = (Date.now() - lastframe) / 1000;
+      function animate() {
+        const delta = clock.getDelta();
 
-        if (mixer) {
-          mixer.update(dt);
-        }
+        mixer.update(delta);
 
-        renderer.render(scene, camera);
-        lastframe = Date.now();
-        requestAnimationFrame(update);
-      }
+        // stats.update();
 
-      function render() {
-        renderer.render(scene, camera);
+        composer.render();
       }
     </script>
     <style>
       .nav {
-        position: sticky;
+        position: fixed;
         top: 0;
-        right: 0;
+        left: 0;
       }
       .nav a {
         color: gray;
