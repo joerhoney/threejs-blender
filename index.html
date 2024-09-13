@@ -36,11 +36,11 @@
 
   <body>
     <script type="module">
-      import * as THREE from "./three.module.js";
+      import * as THREE from "./js/three.module.js";
 
-      import { OrbitControls } from "./OrbitControls.js";
-      import { GLTFLoader } from "./GLTFLoader.js";
-      import { RGBELoader } from "./RGBELoader.js";
+      import { OrbitControls } from "./js/OrbitControls.js";
+      import { GLTFLoader } from "./js/GLTFLoader.js";
+      import { RGBELoader } from "./js/RGBELoader.js";
 
       let camera,
         scene,
@@ -97,7 +97,7 @@
         // scene.add( dirlight );
 
         new RGBELoader().load(
-          "pexels-pachon-in-motion-1-360.hdr",
+          "assets/pexels-pachon-in-motion-1-360.hdr",
           function (texture) {
             texture.mapping = THREE.EquirectangularReflectionMapping;
 
@@ -109,7 +109,7 @@
             // model
 
             const loader = new GLTFLoader();
-            loader.load("Moving-Geometry-2.gltf", function (gltf) {
+            loader.load("assets/Moving-Geometry-2.gltf", function (gltf) {
               mixer = new THREE.AnimationMixer(gltf.scene);
               cubeAction = mixer.clipAction(gltf.animations[0]);
 
