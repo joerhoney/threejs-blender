@@ -1,12 +1,12 @@
-**3D Animation Class: Assignment 1**
+**3D Animation Class: Assignment 0**
 
-# [Snowman](https://joerhoney.github.io/threejs-blender/)
+# [Three.js/Blender Template](https://joerhoney.github.io/threejs-blender/)
 
-![Screenshot of snowman](https://github.com/joerhoney/threejs-blender/blob/main/screenshot.jpg)
+![Screenshot of my work](https://github.com/joerhoney/threejs-blender/blob/main/screenshot.jpg)
 
 ## Objective
 
-- Animate a box.
+- Maintain a working Three.js template
 
 ## Tools
 
