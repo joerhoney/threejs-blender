@@ -11,7 +11,7 @@
     <meta name="description" content="Description for scene." />
     <meta
       property="og:image"
-      content="https://raw.githubusercontent.com/joerhoney/threejs-blender/main/screenshot.jpg"
+      content="https://raw.githubusercontent.com/joerhoney/3d-snowman/main/snowman-screenshot.jpg"
     />
     <meta property="og:keywords" content="3D model, 3D animation" />
     <meta property="og:type" content="website" />
@@ -29,74 +29,53 @@
         }
       }
       body {
-        background: #111;
         margin: 0px;
       }
     </style>
   </head>
+
   <body>
-    <div id="container"></div>
-
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "./js/build/three.module.js",
-          "three/addons/": "./js/"
-        }
-      }
-    </script>
-
     <script type="module">
-      import * as THREE from "three";
+      import * as THREE from "./three.module.js";
 
-      // import Stats from "three/addons/libs/stats.module.js";
-      // import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+      import { OrbitControls } from "./OrbitControls.js";
+      import { GLTFLoader } from "./GLTFLoader.js";
+      import { RGBELoader } from "./RGBELoader.js";
 
-      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-      import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-      import { RGBELoader } from "three/addons/loaders/RGBELoader.js";
-      import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-      import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-      import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-      import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+      let camera,
+        scene,
+        renderer,
+        dt,
+        lastframe = Date.now(),
+        mixer,
+        cubeAction;
 
-      let camera, stats;
-      let composer, renderer, mixer, clock;
+      // Create an AnimationMixer, and get the list of AnimationClip instances
+      // const mixer = new THREE.AnimationMixer( mesh );
+      // const clips = mesh.animations;
 
-      const params = {
-        threshold: 0,
-        strength: 0.03,
-        radius: 0,
-        exposure: 2,
-      };
+      // Update the mixer on each frame
+      // function update () {
+      // 	mixer.update( deltaSeconds );
+      // }
+
+      // // Play a specific animation
+      // const clip = THREE.AnimationClip.findByName( clips, 'dance' );
+      // const action = mixer.clipAction( clip );
+      // action.play();
+
+      // Play all animations
+      // clips.forEach( function ( clip ) {
+      // 	mixer.clipAction( clip ).play();
+      // } );
 
       init();
+      update();
+      render();
 
-      async function init() {
-        const container = document.getElementById("container");
-
-        clock = new THREE.Clock();
-
-        const scene = new THREE.Scene();
-
-        new RGBELoader().load(
-          "assets/pexels-pachon-in-motion-1-360.hdr",
-          function (texture) {
-            texture.mapping = THREE.EquirectangularReflectionMapping;
-
-            scene.background = texture;
-            scene.environment = texture;
-
-            // model
-
-            // const loader = new GLTFLoader().setPath( 'assets/' );
-            // loader.load( 'Moving-Geometry-2.gltf', function ( gltf ) {
-            // 	scene.add( gltf.scene );
-            // } );
-          }
-        );
-
-        //
+      function init() {
+        const container = document.createElement("div");
+        document.body.appendChild(container);
 
         camera = new THREE.PerspectiveCamera(
           45,
@@ -105,130 +84,102 @@
           200
         );
         camera.position.set(20, 10, 120);
-        scene.add(camera);
 
-        scene.add(new THREE.AmbientLight(0xcccccc));
+        scene = new THREE.Scene();
 
-        const pointLight = new THREE.PointLight(0xffffff, 100);
-        camera.add(pointLight);
+        // let ambilight = new THREE.AmbientLight( 0xcccffc, 3.4 );
+        // ambilight.name = "ambilight"
+        // scene.add( ambilight );
 
-        const loader = new GLTFLoader();
-        const gltf = await loader.loadAsync("assets/Moving-Geometry-2.gltf");
+        // let dirlight = new THREE.DirectionalLight( 0xffcffc, 5.4 );
+        // dirlight.name = "dirlight"
+        // dirlight.position.set(0,0,0)
+        // scene.add( dirlight );
 
-        const model = gltf.scene;
-        scene.add(model);
+        new RGBELoader().load(
+          "pexels-pachon-in-motion-1-360.hdr",
+          function (texture) {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
 
-        mixer = new THREE.AnimationMixer(model);
-        const clip = gltf.animations[0];
-        mixer.clipAction(clip.optimize()).play();
+            scene.background = texture;
+            scene.environment = texture;
 
-        //
+            render();
+
+            // model
+
+            const loader = new GLTFLoader();
+            loader.load("Moving-Geometry-2.gltf", function (gltf) {
+              mixer = new THREE.AnimationMixer(gltf.scene);
+              cubeAction = mixer.clipAction(gltf.animations[0]);
+
+              console.log("loader:");
+              console.log(loader);
+              console.log(JSON.stringify(loader));
+              console.log("gltf.animations[1]:");
+              console.log(gltf.animations[1]);
+              console.log("mixer:");
+              console.log(mixer);
+              console.log("cubeAction:");
+              console.log(cubeAction);
+              console.log("scene:");
+              console.log(scene);
+
+              scene.add(gltf.scene);
+              cubeAction.play();
+            });
+          }
+        );
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.physicallyCorrectLights = true;
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setAnimationLoop(animate);
-        renderer.toneMapping = THREE.ReinhardToneMapping;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1;
+        renderer.outputEncoding = THREE.sRGBEncoding;
         container.appendChild(renderer.domElement);
 
-        //
-
-        const renderScene = new RenderPass(scene, camera);
-
-        const bloomPass = new UnrealBloomPass(
-          new THREE.Vector2(window.innerWidth, window.innerHeight),
-          0.5,
-          0.5,
-          0.5
-        );
-        bloomPass.threshold = params.threshold;
-        bloomPass.strength = params.strength;
-        bloomPass.radius = params.radius;
-
-        const outputPass = new OutputPass();
-
-        composer = new EffectComposer(renderer);
-        composer.addPass(renderScene);
-        composer.addPass(bloomPass);
-        composer.addPass(outputPass);
-
-        //
-
-        // stats = new Stats();
-        // container.appendChild(stats.dom);
-
-        //
-
         const controls = new OrbitControls(camera, renderer.domElement);
-        // controls.maxPolarAngle = Math.PI * 0.5;
+        controls.addEventListener("change", render); // use if there is no animation loop
         controls.minDistance = 4;
         controls.maxDistance = 64;
-        // controls.target.set(20, 10, 120);
-
-        //
-
-        // const gui = new GUI();
-
-        // const bloomFolder = gui.addFolder("bloom");
-
-        // bloomFolder
-        //   .add(params, "threshold", 0.0, 1.0)
-        //   .onChange(function (value) {
-        //     bloomPass.threshold = Number(value);
-        //   });
-
-        // bloomFolder
-        //   .add(params, "strength", 0.0, 3.0)
-        //   .onChange(function (value) {
-        //     bloomPass.strength = Number(value);
-        //   });
-
-        // gui
-        //   .add(params, "radius", 0.0, 1.0)
-        //   .step(0.01)
-        //   .onChange(function (value) {
-        //     bloomPass.radius = Number(value);
-        //   });
-
-        // const toneMappingFolder = gui.addFolder("tone mapping");
-
-        // toneMappingFolder
-        //   .add(params, "exposure", 0.1, 2)
-        //   .onChange(function (value) {
-        //     renderer.toneMappingExposure = Math.pow(value, 4.0);
-        //   });
+        controls.target.set(0, 0, 0);
+        controls.update();
 
         window.addEventListener("resize", onWindowResize);
       }
 
       function onWindowResize() {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-
-        camera.aspect = width / height;
+        camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
-        renderer.setSize(width, height);
-        composer.setSize(width, height);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        render();
       }
 
-      function animate() {
-        const delta = clock.getDelta();
+      function update() {
+        dt = (Date.now() - lastframe) / 1000;
 
-        mixer.update(delta);
+        if (mixer) {
+          mixer.update(dt);
+        }
 
-        // stats.update();
+        renderer.render(scene, camera);
+        lastframe = Date.now();
+        requestAnimationFrame(update);
+      }
 
-        composer.render();
+      function render() {
+        renderer.render(scene, camera);
       }
     </script>
     <style>
       .nav {
-        width: 0;
-        height: 0;
-        position: fixed;
+        position: sticky;
         top: 0;
-        left: 0;
+        right: 0;
       }
       .nav a {
         color: gray;
@@ -263,8 +214,6 @@
     <style>
       .icon {
         color: gray;
-        width: 40px;
-        height: 0;
         opacity: 0.3;
         position: fixed;
         top: 12px;
