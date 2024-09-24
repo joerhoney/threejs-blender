@@ -103,7 +103,7 @@
           45,
           window.innerWidth / window.innerHeight,
           0.25,
-          200
+          300
         );
         camera.position.set(20, 10, 120);
         scene.add(camera);
@@ -157,9 +157,11 @@
         //
 
         const controls = new OrbitControls(camera, renderer.domElement);
+        console.log(controls);
         // controls.maxPolarAngle = Math.PI * 0.5;
+        controls.enablePan = false;
         controls.minDistance = 4;
-        controls.maxDistance = 64;
+        controls.maxDistance = 164;
         controls.target.set(0, 0, 0);
 
         window.addEventListener("resize", onWindowResize);
